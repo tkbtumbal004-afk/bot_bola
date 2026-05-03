@@ -27,7 +27,7 @@ bot = telebot.TeleBot(TELEGRAM_TOKEN)
 # 2. HANDLER PESAN
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    welcome_text = "📊 *Predictive Edge Ultra v5.1 Aktif*\nKirim 'NEW MATCH: Tim A vs Tim B' untuk memulai."
+    welcome_text = "📊 *Predictive Edge Ultra vAktif*\nKirim 'NEW MATCH: Tim A vs Tim B' untuk memulai."
     bot.reply_to(message, welcome_text, parse_mode='Markdown')
 
 @bot.message_handler(func=lambda message: True)
