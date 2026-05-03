@@ -8,7 +8,7 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
 # FUNGSI UNTUK MEMBACA PROMPT DARI FILE TXT
 def load_prompt():
-    with open('prompt.txt', 'r', encoding='utf-8') as file:
+    with open('prompt5.txt', 'r', encoding='utf-8') as file:
         return file.read()
 
 # Inisialisasi Gemini
