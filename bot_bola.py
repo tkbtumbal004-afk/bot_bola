@@ -41,7 +41,8 @@ def handle_prediction(message):
         
         bot.reply_to(message, response.text, parse_mode='Markdown')
     except Exception as e:
-        bot.reply_to(message, "❌ *Error:* Pastikan format input benar.", parse_mode='Markdown')
+        # Ini akan mengirimkan pesan error asli ke Telegram agar kita tahu rusaknya di mana
+        bot.reply_to(message, f"❌ Detail Error: {str(e)}")
 
 # 3. RUN BOT
 if __name__ == "__main__":
