@@ -1,49 +1,54 @@
 import os
 import telebot
 import google.generativeai as genai
+from flask import Flask
+from threading import Thread
 
-# 1. KONFIGURASI API
+# --- SERVER MINI UNTUK RENDER ---
+app = Flask('')
+@app.route('/')
+def home():
+    return "Bot is Lucky and Alive!"
+
+def run():
+    app.run(host='0.0.0.0', port=8080)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+# --------------------------------
+
+# KONFIGURASI API
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
-# FUNGSI UNTUK MEMBACA PROMPT DARI FILE TXT
 def load_prompt():
-    with open('prompt5.txt', 'r', encoding='utf-8') as file:
+    with open('prompt.txt', 'r', encoding='utf-8') as file:
         return file.read()
 
-# Inisialisasi Gemini
 genai.configure(api_key=GEMINI_API_KEY)
-
-# Memuat instruksi dari prompt.txt
-system_instructions = load_prompt()
-
 model = genai.GenerativeModel(
     model_name="gemini-1.5-flash",
-    system_instruction=system_instructions
+    system_instruction=load_prompt()
 )
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
-# 2. HANDLER PESAN
-@bot.message_handler(commands=['start', 'help'])
+@bot.message_handler(commands=['start'])
 def send_welcome(message):
-    welcome_text = "📊 *Predictive Edge Ultra vAktif*\nKirim 'NEW MATCH: Tim A vs Tim B' untuk memulai."
-    bot.reply_to(message, welcome_text, parse_mode='Markdown')
+    bot.reply_to(message, "📊 *Predictive Edge Ultra v5.1 Aktif*", parse_mode='Markdown')
 
 @bot.message_handler(func=lambda message: True)
 def handle_prediction(message):
     try:
-        # Memberikan efek "Bot sedang mengetik..." agar terlihat hidup
         bot.send_chat_action(message.chat.id, 'typing')
-        
         chat = model.start_chat(history=[])
         response = chat.send_message(message.text)
-        
         bot.reply_to(message, response.text, parse_mode='Markdown')
     except Exception as e:
-        # Ini akan mengirimkan pesan error asli ke Telegram agar kita tahu rusaknya di mana
-        bot.reply_to(message, f"❌ Detail Error: {str(e)}")
+        # Menampilkan detail error asli ke Telegram untuk debug
+        bot.reply_to(message, f"❌ Error Detail: {str(e)}")
 
-# 3. RUN BOT
 if __name__ == "__main__":
+    keep_alive() # Menjalankan server mini agar Render senang
     bot.infinity_polling()
