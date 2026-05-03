@@ -33,12 +33,15 @@ def send_welcome(message):
 @bot.message_handler(func=lambda message: True)
 def handle_prediction(message):
     try:
+        # Memberikan efek "Bot sedang mengetik..." agar terlihat hidup
+        bot.send_chat_action(message.chat.id, 'typing')
+        
         chat = model.start_chat(history=[])
         response = chat.send_message(message.text)
+        
         bot.reply_to(message, response.text, parse_mode='Markdown')
     except Exception as e:
-        print(f"Error: {e}")
-        bot.reply_to(message, "❌ Terjadi gangguan. Pastikan format benar.")
+        bot.reply_to(message, "❌ *Error:* Pastikan format input benar.", parse_mode='Markdown')
 
 # 3. RUN BOT
 if __name__ == "__main__":
